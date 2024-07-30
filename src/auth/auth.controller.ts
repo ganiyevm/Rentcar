@@ -1,33 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { SignUpUserDto, SignInUserDto, OtpVerifyDto } from "../dto";
 
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Post()
-  create(@Body() createAuthDto: any) {
-    return this.authService.create(createAuthDto);
+  @Post('signup')
+  signup(@Body() createUserDto: SignUpUserDto) {
+    return this.authService.signup(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @Post('otp-verify')
+  otp_verify(@Body() otpVerifyDto: OtpVerifyDto) {
+    return this.authService.otp_verify(otpVerifyDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @Post('signin')
+  signin(@Body() signInUserDto: SignInUserDto) {
+    return this.authService.signin(signInUserDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: any) {
-    return this.authService.update(+id, updateAuthDto);
+  @Post('refresh-token')
+  refresh_token(@Body() refreshToken: any) {
+    return this.authService.refresh_token(refreshToken);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Get('getMe')
+  getMe() {
+    return this.authService.getMe();
+  }
+
+  @Get('logout')
+  logout() {
+    return this.authService.logout();
   }
 }
