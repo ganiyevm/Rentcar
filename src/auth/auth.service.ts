@@ -203,5 +203,27 @@ export class AuthService {
     }
   }
 
-  async logout(request: any) {}
+  async logout(request: any) {
+    try {
+      const user = request.user;
+
+      if (!user) {
+        return new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+
+      await this.userRepository.deleteToken(user.id);
+      
+      return {
+        accessToken: 'logout',
+        refreshToken: 'logout'
+      }
+    } catch (error) {
+      console.log(error);
+
+      return new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

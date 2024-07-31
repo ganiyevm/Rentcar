@@ -26,15 +26,30 @@ export class UserRepository {
   }
 
   async updateUserStatus(id: string) {
-    await this.prisma.user.update({ where: { id }, data: { status: 'ACTIVE' } });
+    await this.prisma.user.update({
+      where: { id },
+      data: { status: 'ACTIVE' },
+    });
   }
-  
-  async createAndUpdateToken(refreshToken: { userId: string, refresh: string }) {
+
+  async createAndUpdateToken(refreshToken: {
+    userId: string;
+    refresh: string;
+  }) {
     const { userId, refresh } = refreshToken;
-    const existToken = await this.prisma.refresh.findUnique({ where: { userId } });
+    const existToken = await this.prisma.refresh.findUnique({
+      where: { userId },
+    });
     if (existToken) {
-      return await this.prisma.refresh.update({ where: { userId }, data: { refresh } });
+      return await this.prisma.refresh.update({
+        where: { userId },
+        data: { refresh },
+      });
     }
     return await this.prisma.refresh.create({ data: { userId, refresh } });
+  }
+
+  async deleteToken(userId: string) {
+    await this.prisma.refresh.delete({ where: { userId } });
   }
 }
