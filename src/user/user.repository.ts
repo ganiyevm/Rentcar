@@ -16,4 +16,26 @@ export class UserRepository {
   async createOtp(newOtp: { userId: string; otp: string }) {
     await this.prisma.otp.create({ data: newOtp });
   }
+
+  async findOneOtp(userId: string) {
+    return await this.prisma.otp.findUnique({ where: { userId } });
+  }
+
+  async deleteOtp(id: string) {
+    await this.prisma.otp.delete({ where: { id } });
+  }
+
+  async updateUserStatus(id: string) {
+    await this.prisma.user.update({ where: { id }, data: { status: 'ACTIVE' } });
+  }
+  
+  async createAndUpdateToken(refreshToken: { userId: string, refresh: string }) {
+    const { userId, refresh } = refreshToken;
+    const existToken = await this.prisma.refresh.findUnique({ where: { userId } });
+    console.log(existToken)
+    if (existToken) {
+      return await this.prisma.refresh.update({ where: { userId }, data: { refresh } });
+    }
+    return await this.prisma.refresh.create({ data: { userId, refresh } });
+  }
 }
