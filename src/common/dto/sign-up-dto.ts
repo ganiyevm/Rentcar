@@ -34,7 +34,7 @@ export class SignUpUserDto {
   @Length(6, 6)
   password: string;
 
-  @IsEnum(['client', 'supervisor', 'admin'])
+  @IsEnum(['CLIENT', 'SUPERVISOR', 'ADMIN'])
   @IsOptional()
-  role: 'client' | 'supervisor' | 'admin';
+  role: 'CLIENT' | 'SUPERVISOR' | 'ADMIN';
 }

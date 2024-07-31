@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
       const existUser = await this.userRepository.findByEmail(email);
 
       if (!existUser) {
-        return new HttpException('User already exist', HttpStatus.BAD_REQUEST);
+        return new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
       }
 
       const existOtp = await this.userRepository.findOneOtp(existUser.id);
@@ -114,34 +115,93 @@ export class AuthService {
     return this.jwtService.sign(payload, expire);
   }
 
-  async refresh_token(refreshToken: any) {
+  async refresh_token(token: any) {
     try {
-      if (typeof refreshToken !== 'string') {
-        return new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      }
-
-      const decodedUser = await this.jwtService.verify(refreshToken);
-
-      console.log(decodedUser)
       
-      if (decodedUser.id !== 'string') {
-        return new HttpException('You must be signin', HttpStatus.BAD_REQUEST);
+      if (typeof token.token !== 'string') {
+        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
       }
 
+      const decodedUser = await this.jwtService.verifyAsync(token.token);
+
+      const accessTime = this.configService.get<string>('jwt.accessTime');
+      
+      const refreshTime = this.configService.get<string>('jwt.refreshTime');
+
+      const accessToken = this.generateToken(
+        { id: decodedUser.id, email: decodedUser.email, name: decodedUser.firstName },
+        { expiresIn: accessTime },
+      );
+
+      const refreshToken = this.generateToken(
+        { id: decodedUser.id, email: decodedUser.email, name: decodedUser.firstName },
+        { expiresIn: refreshTime },
+      );
+
+      const refresh = await this.userRepository.createAndUpdateToken({
+        refresh: refreshToken,
+        userId: decodedUser.id,
+      });
+
+      if (!refresh) {
+        throw new HttpException(
+          'Internal Server Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      return { accessToken, refreshToken };
 
     } catch (error) {
-      console.log(error.name);
+      console.log(error);
+
+      if (error.name === 'TokenExpiredError') {
+        return new HttpException(
+          'Token has expired',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      if (error.name === 'JsonWebTokenError') {
+        return new HttpException(
+          'Invalid token',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+
+      return new HttpException(
+        'You must be signed in',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+
+  async getMe(request: any) {
+    try {
+      const user = request.user; 
+
+      if (!user) {
+        return new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+      }
+
+      const existUser = await this.userRepository.findByEmail(user.email);
+
+      if (!existUser) {
+        return new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      const { password, ...safeUser } = existUser;
+
+      return safeUser;
+    } catch (error) {
+      console.log(error);
 
       return new HttpException(
         'Internal Server Error',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-
   }
 
-  async getMe() {}
-
-  async logout() {}
+  async logout(request: any) {}
 }

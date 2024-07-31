@@ -1,6 +1,10 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpUserDto, SignInUserDto, OtpVerifyDto } from "../common/dto";
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role, Roles } from 'src/common/guards/roles.decorator';
+import { request } from 'express';
 
 
 @Controller('auth')
@@ -27,13 +31,17 @@ export class AuthController {
     return this.authService.refresh_token(refreshToken);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.SUPERVISOR, Role.CLIENT)
   @Get('getMe')
-  getMe() {
-    return this.authService.getMe();
+  getMe(@Req() request: Request) {
+    return this.authService.getMe(request);
   }
 
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.SUPERVISOR, Role.CLIENT)
   @Get('logout')
-  logout() {
-    return this.authService.logout();
+  logout(@Req() request: Request) {
+    return this.authService.logout(request);
   }
 }

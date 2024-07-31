@@ -32,7 +32,6 @@ export class UserRepository {
   async createAndUpdateToken(refreshToken: { userId: string, refresh: string }) {
     const { userId, refresh } = refreshToken;
     const existToken = await this.prisma.refresh.findUnique({ where: { userId } });
-    console.log(existToken)
     if (existToken) {
       return await this.prisma.refresh.update({ where: { userId }, data: { refresh } });
     }
