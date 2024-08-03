@@ -9,6 +9,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { CarsModule } from './cars/cars.module';
 import { BrandsModule } from './brands/brands.module';
 import { ModelsModule } from './models/models.module';
+import { RentDetailsModule } from './rent-details/rent-details.module';
+import { PaymentsModule } from './payments/payments.module';
+import { CarImageModule } from './car-image/car-image.module';
 
 @Module({
   imports: [
@@ -41,6 +44,9 @@ import { ModelsModule } from './models/models.module';
     CarsModule,
     BrandsModule,
     ModelsModule,
+    RentDetailsModule,
+    PaymentsModule,
+    CarImageModule,
   ],
   controllers: [],
   providers: [PrismaService],
