@@ -6,6 +6,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from './prisma/prisma.service';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { CarsModule } from './cars/cars.module';
+import { BrandsModule } from './brands/brands.module';
+import { ModelsModule } from './models/models.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { MailerModule } from '@nestjs-modules/mailer';
     }),
     AuthModule,
     UserModule,
+    CarsModule,
+    BrandsModule,
+    ModelsModule,
   ],
   controllers: [],
   providers: [PrismaService],
