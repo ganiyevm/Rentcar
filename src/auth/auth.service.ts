@@ -116,7 +116,6 @@ export class AuthService {
 
   async refresh_token(token: any) {
     try {
-      
       if (typeof token.token !== 'string') {
         throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
       }
@@ -124,16 +123,24 @@ export class AuthService {
       const decodedUser = await this.jwtService.verifyAsync(token.token);
 
       const accessTime = this.configService.get<string>('jwt.accessTime');
-      
+
       const refreshTime = this.configService.get<string>('jwt.refreshTime');
 
       const accessToken = this.generateToken(
-        { id: decodedUser.id, email: decodedUser.email, name: decodedUser.firstName },
+        {
+          id: decodedUser.id,
+          email: decodedUser.email,
+          name: decodedUser.firstName,
+        },
         { expiresIn: accessTime },
       );
 
       const refreshToken = this.generateToken(
-        { id: decodedUser.id, email: decodedUser.email, name: decodedUser.firstName },
+        {
+          id: decodedUser.id,
+          email: decodedUser.email,
+          name: decodedUser.firstName,
+        },
         { expiresIn: refreshTime },
       );
 
@@ -150,35 +157,24 @@ export class AuthService {
       }
 
       return { accessToken, refreshToken };
-
     } catch (error) {
       console.log(error);
 
       if (error.name === 'TokenExpiredError') {
-        return new HttpException(
-          'Token has expired',
-          HttpStatus.UNAUTHORIZED,
-        );
+        return new HttpException('Token has expired', HttpStatus.UNAUTHORIZED);
       }
 
       if (error.name === 'JsonWebTokenError') {
-        return new HttpException(
-          'Invalid token',
-          HttpStatus.UNAUTHORIZED,
-        );
+        return new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
       }
 
-      return new HttpException(
-        'You must be signed in',
-        HttpStatus.BAD_REQUEST,
-      );
+      return new HttpException('You must be signed in', HttpStatus.BAD_REQUEST);
     }
   }
 
-
   async getMe(request: any) {
     try {
-      const user = request.user; 
+      const user = request.user;
 
       if (!user) {
         return new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
@@ -211,11 +207,11 @@ export class AuthService {
       }
 
       await this.userRepository.deleteToken(user.id);
-      
+
       return {
         accessToken: 'logout',
-        refreshToken: 'logout'
-      }
+        refreshToken: 'logout',
+      };
     } catch (error) {
       console.log(error);
 

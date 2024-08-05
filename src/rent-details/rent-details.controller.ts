@@ -1,11 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { RentDetailsService } from './rent-details.service';
-import { CreateRentDetailDto } from './dto/create-rent-detail.dto';
-import { UpdateRentDetailDto } from './dto/update-rent-detail.dto';
+import { CreateRentDetailDto } from '../common/dto/create-rent-detail.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
+@ApiTags('rent-details')
 @Controller('rent-details')
 export class RentDetailsController {
-  constructor(private readonly rentDetailsService: RentDetailsService) {}
+  constructor(private readonly rentDetailsService: RentDetailsService) { }
 
   @Post()
   create(@Body() createRentDetailDto: CreateRentDetailDto) {
@@ -23,7 +28,7 @@ export class RentDetailsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRentDetailDto: UpdateRentDetailDto) {
+  update(@Param('id') id: string, @Body() updateRentDetailDto: any) {
     return this.rentDetailsService.update(+id, updateRentDetailDto);
   }
 

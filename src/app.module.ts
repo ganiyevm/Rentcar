@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { NestConfigModule } from './config/config.module';
+import { NestConfigModule } from './modules/config/config.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaService } from './modules/prisma/prisma.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CarsModule } from './cars/cars.module';
 import { BrandsModule } from './brands/brands.module';
@@ -12,6 +12,7 @@ import { ModelsModule } from './models/models.module';
 import { RentDetailsModule } from './rent-details/rent-details.module';
 import { PaymentsModule } from './payments/payments.module';
 import { CarImageModule } from './car-image/car-image.module';
+import { ColorModule } from './color/color.module';
 
 @Module({
   imports: [
@@ -47,8 +48,9 @@ import { CarImageModule } from './car-image/car-image.module';
     RentDetailsModule,
     PaymentsModule,
     CarImageModule,
+    ColorModule,
   ],
   controllers: [],
   providers: [PrismaService],
 })
-export class AppModule {}
+export class AppModule { }

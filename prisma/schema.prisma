@@ -19,9 +19,20 @@ enum UserStatus {
 }
 
 enum UserRole {
+  USER
   CLIENT
   SUPERVISOR
   ADMIN
+}
+
+enum CarStatus {
+  OK
+  BUSY
+}
+
+enum PaymentStatus {
+  OK
+  BAD
 }
 
 model User {
@@ -32,26 +43,118 @@ model User {
   email     String     @unique
   password  String
   status    UserStatus @default(INACTIVE)
-  role      UserRole   @default(CLIENT)
+  role      UserRole   @default(USER)
   refresh   Refresh?
   otp       Otp?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+
+  payments    Payment[]
+  rentDetails RentDetails[]
 }
 
 model Refresh {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid())
   refresh   String
-  user      User       @relation(fields: [userId], references: [id])
-  userId    String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Otp {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid())
   otp       String
-  user      User       @relation(fields: [userId], references: [id])
-  userId    String     @unique
-  createdAt DateTime   @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Car {
+  id String @id @default(uuid())
+
+  brandId String
+  brand   Brand  @relation(fields: [brandId], references: [id])
+
+  modelId String
+  model   Model  @relation(fields: [modelId], references: [id])
+
+  colorId String
+  color   Color  @relation(fields: [colorId], references: [id])
+
+  carImages CarImage[]
+
+  factoryDate DateTime
+
+  price Decimal
+
+  status CarStatus @default(OK)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rentDetails RentDetails[]
+  payments    Payment[]
+}
+
+model Model {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  cars Car[]
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  cars Car[]
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  carId String
+  car   Car    @relation(fields: [carId], references: [id])
+
+  paymentNumber Int
+
+  status    PaymentStatus @default(BAD)
+  createdAt DateTime      @default(now())
+}
+
+model Color {
+  id        String   @id @default(uuid())
+  color     String   @unique
+  createdAt DateTime @default(now())
+
+  cars Car[]
+}
+
+model CarImage {
+  id       String @id @default(uuid())
+  url      String
+  mimetype Int
+
+  carId String
+  car   Car    @relation(fields: [carId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model RentDetails {
+  id          String   @id @default(uuid())
+  carId       String
+  car         Car      @relation(fields: [carId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  total_price Decimal
+  start_date  DateTime
+  end_date    DateTime
+  createdAt   DateTime @default(now())
 }

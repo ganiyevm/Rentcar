@@ -1,34 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
 import { ModelsService } from './models.service';
-import { CreateModelDto } from './dto/create-model.dto';
-import { UpdateModelDto } from './dto/update-model.dto';
+import { CreateModelDto } from '../common/dto/create-model.dto';
+import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard, RolesGuard)
+@ApiTags('models')
 @Controller('models')
 export class ModelsController {
-  constructor(private readonly modelsService: ModelsService) {}
+  constructor(private readonly modelsService: ModelsService) { }
 
+  @ApiProperty({ type: CreateModelDto })
   @Post()
-  create(@Body() createModelDto: CreateModelDto) {
-    return this.modelsService.create(createModelDto);
+  createModel(@Body() createModelDto: CreateModelDto) {
+    return this.modelsService.createModel(createModelDto);
   }
 
-  @Get()
-  findAll() {
-    return this.modelsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.modelsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateModelDto: UpdateModelDto) {
-    return this.modelsService.update(+id, updateModelDto);
-  }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.modelsService.remove(+id);
+  deleteModel(@Param('id') id: string) {
+    return this.modelsService.deleteModel(id);
   }
 }
