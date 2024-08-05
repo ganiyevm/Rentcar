@@ -76,11 +76,11 @@ export class AuthService {
       const refreshTime = this.configService.get<string>('jwt.refreshTime');
 
       const accessToken = this.generateToken(
-        { id: existUser.id, email, name: existUser.firstName },
+        { id: existUser.id, email, name: existUser.firstName, role: existUser.role},
         { expiresIn: accessTime },
       );
       const refreshToken = this.generateToken(
-        { id: existUser.id, email, name: existUser.firstName },
+        { id: existUser.id, email, name: existUser.firstName, role: existUser.role },
         { expiresIn: refreshTime },
       );
 
@@ -108,7 +108,7 @@ export class AuthService {
   }
 
   generateToken(
-    payload: { id: string; email: string; name: string },
+    payload: { id: string; email: string; name: string; role: string },
     expire: { expiresIn: string },
   ) {
     return this.jwtService.sign(payload, expire);
@@ -131,6 +131,7 @@ export class AuthService {
           id: decodedUser.id,
           email: decodedUser.email,
           name: decodedUser.firstName,
+          role: decodedUser.role
         },
         { expiresIn: accessTime },
       );
@@ -140,6 +141,7 @@ export class AuthService {
           id: decodedUser.id,
           email: decodedUser.email,
           name: decodedUser.firstName,
+          role: decodedUser.role
         },
         { expiresIn: refreshTime },
       );

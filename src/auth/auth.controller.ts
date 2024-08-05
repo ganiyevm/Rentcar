@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpUserDto, SignInUserDto, OtpVerifyDto } from '../common/dto';
+import { SignUpUserDto, SignInUserDto, OtpVerifyDto, RefreshDto } from '../common/dto';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role, Roles } from 'src/common/guards/roles.decorator';
@@ -28,7 +28,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  refresh_token(@Body() refreshToken: any) {
+  refresh_token(@Body() refreshToken: RefreshDto) {
     return this.authService.refresh_token(refreshToken);
   }
 

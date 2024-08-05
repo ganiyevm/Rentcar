@@ -20,7 +20,10 @@ async function bootstrap() {
     .setDescription('The RentCar API description')
     .setVersion('1.0')
     .addTag('Cars')
-    .build();
+    .addBearerAuth()
+    .build()
+
+    
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs/api', app, document);
 

@@ -14,9 +14,11 @@ export class UserService {
 
   ) { }
   
-  async create(createUserDto: SignUpUserDto) {
+  async create(createUserDto: any) {
     try {
-      const { firstName, lastName, email, password, age } = createUserDto;
+      const { firstName, email, password, } = createUserDto;
+
+      
       const existUser = await this.userRepository.findByEmail(email);
 
       if (existUser) {
@@ -30,9 +32,8 @@ export class UserService {
 
       const newUser = await this.userRepository.createUser({
         firstName,
-        lastName,
         email,
-        age,
+        ...createUserDto,
         password: hashedPassword,
       });
 
