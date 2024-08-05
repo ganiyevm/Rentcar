@@ -30,6 +30,10 @@ export class CarsRepository {
     return await this.prisma.model.findUnique({ where: { id } });
   }
 
+  async findByIdPayment(id: string) {
+    return await this.prisma.payment.findUnique({ where: { id } });
+  }
+
   async createColor(color: string) {
     return await this.prisma.color.create({ data: { color } });
   }
@@ -44,6 +48,18 @@ export class CarsRepository {
 
   async deleteColor(id: string) {
     await this.prisma.color.delete({ where: { id } });
+  }
+
+  async createPayment(payment: {
+    userId: string;
+    carId: string;
+    paymentNumber: number;
+  }) {
+    return await this.prisma.payment.create({ data: { ...payment } });
+  }
+
+  async findOnePayment(userId: string, paymentNumber:number) {
+    return await this.prisma.payment.findFirst({ where: { userId, paymentNumber } });
   }
 
   async deleteModel(id: string) {
@@ -78,12 +94,24 @@ export class CarsRepository {
     return await this.prisma.car.findMany();
   }
 
+  async findAllPayments() {
+    return await this.prisma.payment.findMany();
+  }
+
   async updateCar(id: string, update: UpdateCarDto) {
     await this.prisma.car.update({ where: { id }, data: { ...update } });
     return await this.findByIdCar(id);
   }
 
+  async updatePaymentStatus(id: string,) {
+    await this.prisma.payment.update({ where: { id }, data: { status: 'OK' } });
+  }
+
   async deleteCar(id: string) {
     await this.prisma.car.delete({ where: { id } });
+  }
+
+  async deletePayment(id: string) {
+    await this.prisma.payment.delete({ where: { id } });
   }
 }

@@ -33,6 +33,13 @@ export class UserRepository {
     });
   }
 
+  async updateUserRole(id: string) {
+    await this.prisma.user.update({
+      where: { id },
+      data: { role: 'CLIENT' },
+    });
+  }
+
   async createAndUpdateToken(refreshToken: {
     userId: string;
     refresh: string;
