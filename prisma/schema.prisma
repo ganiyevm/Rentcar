@@ -82,7 +82,7 @@ model Car {
   colorId String
   color   Color  @relation(fields: [colorId], references: [id])
 
-  carImages CarImage[]
+  carImages String[]
 
   factoryDate DateTime
 
@@ -134,17 +134,6 @@ model Color {
   createdAt DateTime @default(now())
 
   cars Car[]
-}
-
-model CarImage {
-  id       String @id @default(uuid())
-  url      String
-  mimetype String
-
-  carId String
-  car   Car    @relation(fields: [carId], references: [id])
-
-  createdAt DateTime @default(now())
 }
 
 model RentDetails {

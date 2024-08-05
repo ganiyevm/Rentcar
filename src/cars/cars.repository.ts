@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCarDto } from 'src/common/dto';
+import { CreateCarDto, UpdateCarDto } from 'src/common/dto';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
@@ -20,6 +20,10 @@ export class CarsRepository {
 
   async findByIdBrand(id: string) {
     return await this.prisma.brand.findUnique({ where: { id } });
+  }
+
+  async findByIdCar(id: string) {
+    return await this.prisma.car.findUnique({ where: { id } });
   }
 
   async findByIdModel(id: string) {
@@ -55,7 +59,8 @@ export class CarsRepository {
   }
 
   async createCar(createCarDto: CreateCarDto) {
-    const { brandId, modelId, colorId, factoryDate, price, carImages } = createCarDto;
+    const { brandId, modelId, colorId, factoryDate, price, carImages } =
+      createCarDto;
 
     return await this.prisma.car.create({
       data: {
@@ -64,25 +69,21 @@ export class CarsRepository {
         colorId,
         factoryDate: new Date(factoryDate),
         price,
-        carImages: {
-          create: carImages.map((image) => ({
-            url: image,
-            mimetype: 'image/jpeg', 
-          })),
-        },
+        carImages,
       },
     });
   }
 
-  async createImage() {
-    const newImage = await this.prisma.carImage.create({
-      data: {
-        id: fileId,
-        url: `/uploads/${filename}`,
-        mimetype: file.mimetype,
-        carId: 'some-car-id', // Replace with actual carId or pass it as part of the request
-      },
-    });
+  async findAllCars() {
+    return await this.prisma.car.findMany();
   }
 
+  async updateCar(id: string, update: UpdateCarDto) {
+    await this.prisma.car.update({ where: { id }, data: { ...update } });
+    return await this.findByIdCar(id);
+  }
+
+  async deleteCar(id: string) {
+    await this.prisma.car.delete({ where: { id } });
+  }
 }

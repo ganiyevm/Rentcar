@@ -23,28 +23,28 @@ export class AuthController {
 
   @ApiProperty({ type: SignInUserDto })
   @Post('signin')
-  signin(@Body() signInUserDto: SignInUserDto) {
-    return this.authService.signin(signInUserDto);
+  async signin(@Body() signInUserDto: SignInUserDto) {
+    return await this.authService.signin(signInUserDto);
   }
 
   @Post('refresh-token')
-  refresh_token(@Body() refreshToken: RefreshDto) {
-    return this.authService.refresh_token(refreshToken);
+  async refresh_token(@Body() refreshToken: RefreshDto) {
+    return await this.authService.refresh_token(refreshToken);
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPERVISOR, Role.CLIENT, Role.USER)
   @Get('getMe')
-  getMe(@Req() request: Request) {
-    return this.authService.getMe(request);
+  async getMe(@Req() request: Request) {
+    return await this.authService.getMe(request);
   }
 
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPERVISOR, Role.CLIENT, Role.USER)
   @Get('logout')
-  logout(@Req() request: Request) {
-    return this.authService.logout(request);
+  async logout(@Req() request: Request) {
+    return await this.authService.logout(request);
   }
 }

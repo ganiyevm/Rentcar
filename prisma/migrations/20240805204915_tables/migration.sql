@@ -53,6 +53,7 @@ CREATE TABLE "Car" (
     "brandId" TEXT NOT NULL,
     "modelId" TEXT NOT NULL,
     "colorId" TEXT NOT NULL,
+    "carImages" TEXT[],
     "factoryDate" TIMESTAMP(3) NOT NULL,
     "price" DECIMAL(65,30) NOT NULL,
     "status" "CarStatus" NOT NULL DEFAULT 'OK',
@@ -99,17 +100,6 @@ CREATE TABLE "Color" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Color_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "CarImage" (
-    "id" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "mimetype" TEXT NOT NULL,
-    "carId" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "CarImage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -163,9 +153,6 @@ ALTER TABLE "Payment" ADD CONSTRAINT "Payment_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "Payment" ADD CONSTRAINT "Payment_carId_fkey" FOREIGN KEY ("carId") REFERENCES "Car"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "CarImage" ADD CONSTRAINT "CarImage_carId_fkey" FOREIGN KEY ("carId") REFERENCES "Car"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "RentDetails" ADD CONSTRAINT "RentDetails_carId_fkey" FOREIGN KEY ("carId") REFERENCES "Car"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

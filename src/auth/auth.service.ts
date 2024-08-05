@@ -65,6 +65,10 @@ export class AuthService {
         return new HttpException('Invalid Email', HttpStatus.BAD_REQUEST);
       }
 
+      if (existUser.status !== 'ACTIVE') {
+        return new HttpException('You are inactive', HttpStatus.BAD_REQUEST);
+      }
+
       const checkPassword = await bcrypt.compare(password, existUser.password);
 
       if (!checkPassword) {
@@ -121,6 +125,12 @@ export class AuthService {
       }
 
       const decodedUser = await this.jwtService.verifyAsync(token.token);
+
+      const user = await this.userRepository.findByEmail(decodedUser.email);
+
+      if (user?.status !== 'ACTIVE') {
+        return new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      }
 
       const accessTime = this.configService.get<string>('jwt.accessTime');
 

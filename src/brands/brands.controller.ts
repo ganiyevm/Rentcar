@@ -23,12 +23,12 @@ export class BrandsController {
 
   @ApiProperty({ type: CreateBrandDto })
   @Post()
-  createModel(@Body() createBrandDto: CreateBrandDto) {
-    return this.brandsService.createModel(createBrandDto);
+  async createModel(@Body() createBrandDto: CreateBrandDto) {
+    return await this.brandsService.createModel(createBrandDto);
   }
 
   @Delete(':id')
-  deleteModel(@Param('id') id: string) {
-    return this.brandsService.deleteModel(id);
+  async deleteModel(@Param('id') id: string) {
+    return await this.brandsService.deleteModel(id);
   }
 }

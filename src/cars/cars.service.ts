@@ -6,17 +6,16 @@ import { CarsRepository } from './cars.repository';
 @Injectable()
 export class CarsService {
   constructor(private readonly carsRepository: CarsRepository) {}
+
   async create(createCarDto: CreateCarDto) {
     try {
       const { brandId, modelId, colorId, factoryDate, price } = createCarDto;
 
-      const existBrand = await this.carsRepository.findByIdModel(brandId);
+      const existBrand = await this.carsRepository.findByIdBrand(brandId);
 
       const existModel = await this.carsRepository.findByIdModel(modelId);
 
       const existColor = await this.carsRepository.findByIdColor(colorId);
-
-      console.log(existBrand, existColor, existModel);
 
       if (
         existBrand?.id !== brandId ||
@@ -50,13 +49,13 @@ export class CarsService {
 
   async findAll() {
     try {
-      const existUser = await this.carsRepository;
+      const existCars = await this.carsRepository.findAllCars();
 
-      if (!existUser[0]?.id) {
+      if (!existCars[0]?.id) {
         return new HttpException('Not Found', HttpStatus.NOT_FOUND);
       }
 
-      return existUser;
+      return existCars;
     } catch (error) {
       console.log(error);
 
@@ -69,13 +68,13 @@ export class CarsService {
 
   async findOne(id: string) {
     try {
-      const existUser = await this.carsRepository;
+      const existCar = await this.carsRepository.findByIdCar(id);
 
-      if (!existUser[0]?.id) {
+      if (!existCar) {
         return new HttpException('Not Found', HttpStatus.NOT_FOUND);
       }
 
-      return existUser;
+      return existCar;
     } catch (error) {
       console.log(error);
 
@@ -88,13 +87,15 @@ export class CarsService {
 
   async update(id: string, updateCarDto: UpdateCarDto) {
     try {
-      const existUser = await this.carsRepository;
+      const existCar = await this.carsRepository.findByIdCar(id);
 
-      if (!existUser[0]?.id) {
+      if (!existCar) {
         return new HttpException('Not Found', HttpStatus.NOT_FOUND);
       }
 
-      return existUser;
+      const updatedCar = await this.carsRepository.updateCar(id, updateCarDto);
+
+      return updatedCar;
     } catch (error) {
       console.log(error);
 
@@ -107,13 +108,18 @@ export class CarsService {
 
   async delete(id: string) {
     try {
-      const existUser = await this.carsRepository;
+      const existCar = await this.carsRepository.findByIdCar(id);
 
-      if (!existUser[0]?.id) {
+      if (!existCar) {
         return new HttpException('Not Found', HttpStatus.NOT_FOUND);
       }
 
-      return existUser;
+      await this.carsRepository.deleteCar(id);
+
+      return {
+        message: 'Successfully Deleted',
+        statusCode: 200,
+      };
     } catch (error) {
       console.log(error);
 

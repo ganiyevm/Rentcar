@@ -11,9 +11,7 @@ import { BrandsModule } from './brands/brands.module';
 import { ModelsModule } from './models/models.module';
 import { RentDetailsModule } from './rent-details/rent-details.module';
 import { PaymentsModule } from './payments/payments.module';
-import { CarImageModule } from './car-image/car-image.module';
 import { ColorModule } from './color/color.module';
-import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -41,9 +39,6 @@ import { MulterModule } from '@nestjs/platform-express';
         },
       }),
     }),
-    MulterModule.register({
-      dest: './static'
-    }),
     AuthModule,
     UserModule,
     CarsModule,
@@ -51,7 +46,6 @@ import { MulterModule } from '@nestjs/platform-express';
     ModelsModule,
     RentDetailsModule,
     PaymentsModule,
-    CarImageModule,
     ColorModule,
   ],
   controllers: [],

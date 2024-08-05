@@ -17,12 +17,12 @@ export class ColorController {
 
   @ApiProperty({ type: CreateColorDto })
   @Post()
-  createColor(@Body() createColorDto: CreateColorDto) {
-    return this.colorService.createColor(createColorDto);
+  async createColor(@Body() createColorDto: CreateColorDto) {
+    return await this.colorService.createColor(createColorDto);
   }
 
   @Delete(':id')
-  deleteColor(@Param('id') id: string) {
-    return this.colorService.deleteColor(id);
+  async deleteColor(@Param('id') id: string) {
+    return await this.colorService.deleteColor(id);
   }
 }

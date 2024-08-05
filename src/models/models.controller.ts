@@ -16,13 +16,13 @@ export class ModelsController {
 
   @ApiProperty({ type: CreateModelDto })
   @Post()
-  createModel(@Body() createModelDto: CreateModelDto) {
-    return this.modelsService.createModel(createModelDto);
+  async createModel(@Body() createModelDto: CreateModelDto) {
+    return await this.modelsService.createModel(createModelDto);
   }
 
 
   @Delete(':id')
-  deleteModel(@Param('id') id: string) {
-    return this.modelsService.deleteModel(id);
+  async deleteModel(@Param('id') id: string) {
+    return await this.modelsService.deleteModel(id);
   }
 }
