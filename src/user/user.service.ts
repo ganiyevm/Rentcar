@@ -1,24 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { SignUpUserDto } from 'src/common/dto';
+import { UpdateUserDto } from 'src/common/dto';
 import { UserRepository } from './user.repository';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from "bcrypt";
-
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository,
+  constructor(
+    private readonly userRepository: UserRepository,
     private readonly mailerService: MailerService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+  ) {}
 
-  ) { }
-  
   async create(createUserDto: any) {
     try {
-      const { firstName, email, password, } = createUserDto;
+      const { firstName, email, password } = createUserDto;
 
-      
       const existUser = await this.userRepository.findByEmail(email);
 
       if (existUser) {
@@ -59,19 +57,95 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    try {
+      const allUsers = await this.userRepository.findAllUsers();
+
+      if (!allUsers) {
+        return new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      return allUsers;
+    } catch (error) {
+      console.log(error);
+
+      return new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    try {
+      const existUser = await this.userRepository.findOneUser(id);
+
+      if (!existUser[0]?.id) {
+        return new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      return existUser;
+    } catch (error) {
+      console.log(error);
+
+      return new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  update(id: string, updateUserDto: any) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto, request: any) {
+    try {
+      const existUser = await this.userRepository.findOneUser(id);
+
+      if (!existUser[0]?.id) {
+        return new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      const user = request.user;
+
+      if (user.id !== id || user.role !== 'ADMIN') {
+        return new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+      }
+
+      const updatedUser = await this.userRepository.updateUser(
+        id,
+        updateUserDto,
+      );
+
+      return updatedUser;
+    } catch (error) {
+      console.log(error);
+
+      return new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
-  delete(id: string) {
-    return `This action removes a #${id} user`;
+  async delete(id: string) {
+    try {
+      const existUser = await this.userRepository.findOneUser(id);
+
+      if (!existUser[0]?.id) {
+        return new HttpException('Not Found', HttpStatus.NOT_FOUND);
+      }
+
+      await this.userRepository.deleteUser(id);
+
+      return {
+        message: 'Successfully Deleted',
+        statusCode: 200,
+      };
+    } catch (error) {
+      console.log(error);
+
+      return new HttpException(
+        'Internal Server Error',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

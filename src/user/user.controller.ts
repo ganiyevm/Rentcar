@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, SignUpUserDto } from 'src/common/dto';
+import { CreateUserDto, SignUpUserDto, UpdateUserDto } from 'src/common/dto';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Role, Roles } from 'src/common/guards/roles.decorator';
@@ -31,10 +31,12 @@ export class UserController {
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
   }
+
   @Roles(Role.ADMIN, Role.SUPERVISOR, Role.CLIENT, Role.USER)
+  @ApiProperty({ type: UpdateUserDto })
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: any) {
-    return this.userService.update(id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() request: Request) {
+    return this.userService.update(id, updateUserDto, request);
   }
 
   @Roles(Role.ADMIN)
