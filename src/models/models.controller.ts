@@ -4,9 +4,11 @@ import { CreateModelDto } from '../common/dto/create-model.dto';
 import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role, Roles } from 'src/common/guards/roles.decorator';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 @ApiTags('models')
 @Controller('models')
 export class ModelsController {
