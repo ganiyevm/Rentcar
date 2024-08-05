@@ -4,11 +4,11 @@ import { CarsRepository } from 'src/cars/cars.repository';
 
 @Injectable()
 export class ColorService {
-  constructor(private readonly CarsRepository: CarsRepository) {}
+  constructor(private readonly carsRepository: CarsRepository) {}
 
   async createColor(createColorDto: CreateColorDto) {
     try {
-      const existColor = await this.CarsRepository.findOneColor(
+      const existColor = await this.carsRepository.findOneColor(
         createColorDto.color,
       );
       
@@ -19,7 +19,7 @@ export class ColorService {
         );
       }
 
-      const newColor = await this.CarsRepository.createColor(
+      const newColor = await this.carsRepository.createColor(
         createColorDto.color,
       );
 
@@ -46,13 +46,13 @@ export class ColorService {
 
   async deleteColor(id: string) {
     try {
-      const existColor = await this.CarsRepository.findByIdColor(id);
+      const existColor = await this.carsRepository.findByIdColor(id);
 
       if (!existColor) {
         return new HttpException('Not Found', HttpStatus.NOT_FOUND);
       }
 
-      await this.CarsRepository.deleteColor(id);
+      await this.carsRepository.deleteColor(id);
 
       return {
         message: 'Successfully Deleted',
