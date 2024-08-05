@@ -13,6 +13,7 @@ import { RentDetailsModule } from './rent-details/rent-details.module';
 import { PaymentsModule } from './payments/payments.module';
 import { CarImageModule } from './car-image/car-image.module';
 import { ColorModule } from './color/color.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -39,6 +40,9 @@ import { ColorModule } from './color/color.module';
           },
         },
       }),
+    }),
+    MulterModule.register({
+      dest: './static'
     }),
     AuthModule,
     UserModule,

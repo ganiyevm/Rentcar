@@ -139,7 +139,7 @@ model Color {
 model CarImage {
   id       String @id @default(uuid())
   url      String
-  mimetype Int
+  mimetype String
 
   carId String
   car   Car    @relation(fields: [carId], references: [id])

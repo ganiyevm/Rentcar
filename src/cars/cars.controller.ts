@@ -14,6 +14,7 @@ import { UpdateCarDto } from '../common/dto/update-car.dto';
 import { ApiBearerAuth, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role, Roles } from 'src/common/guards/roles.decorator';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
@@ -23,6 +24,7 @@ export class CarsController {
   constructor(private readonly carsService: CarsService) {}
 
   @ApiProperty({ type: CreateCarDto })
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() createCarDto: CreateCarDto) {
     return this.carsService.create(createCarDto);
@@ -44,7 +46,7 @@ export class CarsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.carsService.remove(id);
+  delete(@Param('id') id: string) {
+    return this.carsService.delete(id);
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CreateCarDto } from 'src/common/dto';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
@@ -52,4 +53,36 @@ export class CarsRepository {
   async deleteBrand(id: string) {
     await this.prisma.brand.delete({ where: { id } });
   }
+
+  async createCar(createCarDto: CreateCarDto) {
+    const { brandId, modelId, colorId, factoryDate, price, carImages } = createCarDto;
+
+    return await this.prisma.car.create({
+      data: {
+        brandId,
+        modelId,
+        colorId,
+        factoryDate: new Date(factoryDate),
+        price,
+        carImages: {
+          create: carImages.map((image) => ({
+            url: image,
+            mimetype: 'image/jpeg', 
+          })),
+        },
+      },
+    });
+  }
+
+  async createImage() {
+    const newImage = await this.prisma.carImage.create({
+      data: {
+        id: fileId,
+        url: `/uploads/${filename}`,
+        mimetype: file.mimetype,
+        carId: 'some-car-id', // Replace with actual carId or pass it as part of the request
+      },
+    });
+  }
+
 }

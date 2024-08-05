@@ -105,7 +105,7 @@ CREATE TABLE "Color" (
 CREATE TABLE "CarImage" (
     "id" TEXT NOT NULL,
     "url" TEXT NOT NULL,
-    "mimetype" INTEGER NOT NULL,
+    "mimetype" TEXT NOT NULL,
     "carId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
