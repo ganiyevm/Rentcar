@@ -126,6 +126,8 @@ model Payment {
 
   status    PaymentStatus @default(BAD)
   createdAt DateTime      @default(now())
+
+  RentDetails RentDetails[]
 }
 
 model Color {
@@ -142,6 +144,8 @@ model RentDetails {
   car         Car      @relation(fields: [carId], references: [id])
   userId      String
   user        User     @relation(fields: [userId], references: [id])
+  paymentId   String
+  payment     Payment  @relation(fields: [paymentId], references: [id])
   total_price Decimal
   start_date  DateTime
   end_date    DateTime

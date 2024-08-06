@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCarDto, UpdateCarDto } from 'src/common/dto';
+import {
+  CreateCarDto,
+  UpdateCarDto,
+  CreateRentDetailDto,
+} from 'src/common/dto';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
@@ -58,8 +62,10 @@ export class CarsRepository {
     return await this.prisma.payment.create({ data: { ...payment } });
   }
 
-  async findOnePayment(userId: string, paymentNumber:number) {
-    return await this.prisma.payment.findFirst({ where: { userId, paymentNumber } });
+  async findOnePayment(userId: string, paymentNumber: number) {
+    return await this.prisma.payment.findFirst({
+      where: { userId, paymentNumber },
+    });
   }
 
   async deleteModel(id: string) {
@@ -91,11 +97,15 @@ export class CarsRepository {
   }
 
   async findAllCars() {
-    return await this.prisma.car.findMany();
+    return await this.prisma.car.findMany({
+      include: { model: true, brand: true, color: true },
+    });
   }
 
   async findAllPayments() {
-    return await this.prisma.payment.findMany();
+    return await this.prisma.payment.findMany({
+      include: { user: true, car: true },
+    });
   }
 
   async updateCar(id: string, update: UpdateCarDto) {
@@ -103,7 +113,7 @@ export class CarsRepository {
     return await this.findByIdCar(id);
   }
 
-  async updatePaymentStatus(id: string,) {
+  async updatePaymentStatus(id: string) {
     await this.prisma.payment.update({ where: { id }, data: { status: 'OK' } });
   }
 
@@ -111,7 +121,48 @@ export class CarsRepository {
     await this.prisma.car.delete({ where: { id } });
   }
 
+  async deleteDetail(id: string) {
+    await this.prisma.rentDetails.delete({ where: { id } });
+  }
+
   async deletePayment(id: string) {
     await this.prisma.payment.delete({ where: { id } });
+  }
+
+  async createRentDetails({
+    userId,
+    carId,
+    paymentId,
+    start_date,
+    end_date,
+    total_price,
+  }: {
+    userId: string;
+    carId: string;
+    paymentId: string;
+    start_date: Date;
+    end_date: Date;
+    total_price: number;
+  }) {
+    return await this.prisma.rentDetails.create({
+      data: {
+        userId,
+        carId,
+        paymentId,
+        start_date,
+        end_date,
+        total_price,
+      },
+    });
+  }
+
+  async findByIdDetail(id: string) {
+    return await this.prisma.rentDetails.findUnique({ where: { id } });
+  }
+
+  async findAllDetail() {
+    return await this.prisma.rentDetails.findMany({
+      include: { user: true, car: true, payment: true },
+    });
   }
 }

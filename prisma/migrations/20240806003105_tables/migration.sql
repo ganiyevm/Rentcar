@@ -107,6 +107,7 @@ CREATE TABLE "RentDetails" (
     "id" TEXT NOT NULL,
     "carId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "paymentId" TEXT NOT NULL,
     "total_price" DECIMAL(65,30) NOT NULL,
     "start_date" TIMESTAMP(3) NOT NULL,
     "end_date" TIMESTAMP(3) NOT NULL,
@@ -159,3 +160,6 @@ ALTER TABLE "RentDetails" ADD CONSTRAINT "RentDetails_carId_fkey" FOREIGN KEY ("
 
 -- AddForeignKey
 ALTER TABLE "RentDetails" ADD CONSTRAINT "RentDetails_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RentDetails" ADD CONSTRAINT "RentDetails_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "Payment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

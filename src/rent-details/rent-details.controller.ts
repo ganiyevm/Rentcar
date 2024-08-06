@@ -4,36 +4,35 @@ import { CreateRentDetailDto } from '../common/dto/create-rent-detail.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Role, Roles } from 'src/common/guards/roles.decorator';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard, RolesGuard)
 @ApiTags('rent-details')
 @Controller('rent-details')
 export class RentDetailsController {
-  constructor(private readonly rentDetailsService: RentDetailsService) { }
+  constructor(private readonly rentDetailsService: RentDetailsService) {}
 
+  @Roles(Role.ADMIN, Role.SUPERVISOR)
   @Post()
-  create(@Body() createRentDetailDto: CreateRentDetailDto) {
-    return this.rentDetailsService.create(createRentDetailDto);
+  async create(@Body() createRentDetailDto: CreateRentDetailDto) {
+    return await this.rentDetailsService.create(createRentDetailDto);
   }
 
+  @Roles(Role.ADMIN, Role.SUPERVISOR)
   @Get()
-  findAll() {
-    return this.rentDetailsService.findAll();
+  async findAll() {
+    return await this.rentDetailsService.findAll();
   }
 
+  @Roles(Role.ADMIN, Role.SUPERVISOR)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.rentDetailsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.rentDetailsService.findOne(id);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRentDetailDto: any) {
-    return this.rentDetailsService.update(+id, updateRentDetailDto);
-  }
-
+  @Roles(Role.ADMIN, Role.SUPERVISOR)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.rentDetailsService.remove(+id);
+  async delete(@Param('id') id: string) {
+    return await this.rentDetailsService.delete(id);
   }
 }

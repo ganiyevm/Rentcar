@@ -22,6 +22,10 @@ export class UserRepository {
     return await this.prisma.otp.findUnique({ where: { userId } });
   }
 
+  async findByIdUser(id: string) {
+    return await this.prisma.user.findUnique({ where: { id } });
+  }
+
   async deleteOtp(id: string) {
     await this.prisma.otp.delete({ where: { id } });
   }
